@@ -9,6 +9,7 @@ Feature: Get all products from the api
     Given I hit the url of get products api endpoint
     When I pass the url of products in request
     Then I verify that the rate of the product is <FirstProductRate>
+    And I print all the products rate and count
 
     Examples: 
       | FirstProductRate |

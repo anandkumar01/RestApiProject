@@ -20,6 +20,7 @@ public class Products {
 	public int responseCode;
 	public ResponseBody body;
 	public JSONObject requestParams;
+	public JsonPath jsnpath;
 
 	@Given("I hit the url of get products api endpoint")
 	public void i_hit_the_url_of_get_products_api_endpoint() {
@@ -41,16 +42,20 @@ public class Products {
 	@Then("I verify that the rate of the product is {}")
 	public void i_verify_that_the_rate_of_the_product_is(String rate) {
 
-		body = response.getBody();
-
-		// Convert Response body to string
-		String responseBody = body.asString();
-
 		// JSON representation from Response body
-		JsonPath jsnpath = response.jsonPath();
+		jsnpath = response.jsonPath();
 
-		String s = jsnpath.getJsonObject("rating[0].rate").toString();
-		assertEquals(rate, s);
+		String actualrate = jsnpath.getJsonObject("rating[0].rate").toString();
+		assertEquals(rate, actualrate);
+	}
+
+	@Then("I print all the products rate and count")
+	public void i_print_all_the_products_rate_and_count() {
+
+		String rate = jsnpath.getJsonObject("rating.rate").toString();
+		String price = jsnpath.getJsonObject("price").toString();
+		System.out.println("Rates: " + rate);
+		System.out.println("Price: " + price);
 	}
 
 	@Given("I hit the url of post product api endpoint")
@@ -70,19 +75,19 @@ public class Products {
 		requestParams.put("category", "men's footware");
 		requestParams.put("image", "https://fakestoreapi.com/img/81fPKd._AC_SL500.jpg");
 
-		httpRequest.body(requestParams.toJSONString());
-		Response response = httpRequest.post("products");
-		ResponseBody body = response.getBody();
-		
-		System.out.println(response.getStatusLine());
-		System.out.println(body.asString());
 	}
-	
+
 	@Then("I receive the response body with id as {}")
 	public void i_receive_the_response_body_with_id(String id) {
-	    
-//		JsonPath jsnpath = response.jsonPath();
-//		String s = jsnpath.getJsonObject("id").toString();
-//		assertEquals("21", s);
+		httpRequest.body(requestParams.toJSONString());
+		response = httpRequest.post("products");
+		body = response.getBody();
+
+		System.out.println(response.getStatusLine());
+		System.out.println(body.asString());
+
+		jsnpath = response.jsonPath();
+		String actualId = jsnpath.getJsonObject("id").toString();
+		assertEquals("21", actualId);
 	}
 }
