@@ -1,5 +1,6 @@
 package stepDefinition;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -89,5 +90,55 @@ public class Products {
 		jsnpath = response.jsonPath();
 		String actualId = jsnpath.getJsonObject("id").toString();
 		assertEquals("21", actualId);
+	}
+	
+	@Given("I hit the url of put product api endpoint")
+	public void i_hit_the_url_of_put_product_api_endpoint() {
+		RestAssured.baseURI = "https://fakestoreapi.com/";
+	}
+
+	@When("I pass the url of products in request with {}")
+	public void i_pass_the_url_of_products_in_request_with(String productNo) {
+		httpRequest = RestAssured.given();
+		requestParams = new JSONObject();
+		
+		requestParams.put("title", "Test Product");
+		requestParams.put("price", "20.5");
+		requestParams.put("description", "Shoes is from Puma");
+		requestParams.put("category", "men's footware");
+		requestParams.put("image", "https://fakestoreapi.com/img/81fPKd._AG_SL500.jpg");
+		
+		httpRequest.body(requestParams.toJSONString());
+		response = httpRequest.put("products/" + productNo);
+		ResponseBody body = response.getBody();
+		JsonPath jsnpath = response.jsonPath();
+		String actualId = jsnpath.getJsonObject("id").toString();
+		System.out.println(response.getStatusLine());
+		System.out.println(body.asString());
+	}
+	
+	@Given("I hit the url of delete product api endpoint")
+	public void i_hit_the_url_of_delete_product_api_endpoint() {
+		RestAssured.baseURI = "https://fakestoreapi.com/";
+	}
+
+	@When("I pass the url of delete product in request with {}")
+	public void i_pass_the_url_of_delete_product_in_request_with(String productNo) {
+		httpRequest = RestAssured.given();
+		requestParams = new JSONObject();
+		
+		requestParams.put("title", "Test Product");
+		requestParams.put("price", "20.5");
+		requestParams.put("description", "Shoes is from Puma");
+		requestParams.put("category", "men's footware");
+		requestParams.put("image", "https://fakestoreapi.com/img/81fPKd._AG_SL500.jpg");
+		
+		httpRequest.body(requestParams.toJSONString());
+		response = httpRequest.delete("products/" + productNo);
+		ResponseBody body = response.getBody();
+		JsonPath jsnpath = response.jsonPath();
+		String actualId = jsnpath.getJsonObject("id").toString();
+		System.out.println(response.getStatusLine());
+		System.out.println(body.asString());
 	}
 }
